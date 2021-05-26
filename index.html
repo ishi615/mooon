@@ -1,0 +1,210 @@
+<html>  
+    <head>  
+        <title >Moon age</title>  
+        <script type="text/javascript">   
+            var n=31;  
+            var feb;  
+            var leap;   
+            months = ["January","February","March","April","May","June",  
+                                   "July","August","September","October","November","December"];   
+            function Start()  
+            {  
+                FillYearCombo();  
+                FillMonthCombo();  
+                FillDayCombo();  
+               
+                getAge(MyForm);  
+            }   
+           
+            function FillYearCombo()  
+            {  
+                for (var i=2000;i<2022;i++)  
+                {  
+                    var optYear = new Option(i,i);  
+                    document.getElementById("cmbYears").add(optYear, undefined);  
+                }  
+        
+                var curDate = new Date();  
+                var y = curDate.getFullYear();  
+                MyForm.YearCombo.value=y;  
+            }  
+   
+        
+            function FillMonthCombo()  
+            {  
+                for (var i=0;i<months.length;i++)  
+                {  
+                    var optMonth = new Option(months[i],i+1);  
+                    document.getElementById("cmbMonths").add(optMonth, undefined);  
+                }  
+         
+                var curDate = new Date();  
+                var m = curDate.getMonth();  
+                MyForm.MonthCombo.value=m+1;  
+            }  
+   
+         
+            function FillDayCombo()  
+            {  
+                for (var i=1;i<n+1;i++)  
+                {  
+                    var optDay = new Option(i,i);  
+                    document.getElementById("cmbDays").add(optDay, undefined);  
+                }  
+          
+                var curDate = new Date();  
+                var d = curDate.getDate();  
+                MyForm.DayCombo.value=d;  
+            }  
+   
+          
+            function TestLeap()  
+            {  
+                var y=parseInt(MyForm.YearCombo.value);   
+                if ((y%4)==0)  
+                {  
+                    if ((y%100)==0 && (y%400)!=0)  
+                        leap=false;  
+                    else  
+                        leap=true;  
+                }  
+                else  
+                    leap=false;  
+            }  
+   
+          
+            function GetDays(MonthCombo)  
+            {  
+                var m=parseInt(MyForm.MonthCombo.value);  
+                switch(m)  
+                {  
+                    case 2:  
+                        TestLeap();   
+                        if (leap)  
+                            feb=29;  
+                        else  
+                            feb=28;  
+                        n=feb;  
+                        break;  
+                    case 4:  
+                    case 6:  
+                    case 9:  
+                    case 11:  
+                        n=30;  
+                        break;  
+                    default:n=31;  
+                }  
+                document.forms["MyForm"].elements["DayCombo"].options.length=0;  
+                FillDayCombo();  
+            }  
+   
+         
+            function FebruaryDays(YearCombo)  
+            {  
+                TestLeap();   
+                if (leap)  
+                    feb=29;  
+                else  
+                    feb=28;  
+                if(MyForm.MonthCombo.value==2)  
+                {  
+                    n=feb;  
+                    document.forms["MyForm"].elements["DayCombo"].options.length=0;  
+                    FillDayCombo();  
+                }  
+            }  
+   
+          
+            function moonage(d, m, y)  
+            {  
+                var j;  
+                var ip, ag;  
+                j = juliandate(d, m, y);  
+                ip = (j + 4.867) / 29.53059;  
+                ip = ip - Math.floor(ip);  
+                if(ip < 0.5)  
+                {  
+                    ag = ip * 29.53059 + 29.53059 / 2;  
+                }  
+                else  
+                {  
+                    ag = ip * 29.53059 - 29.53059 / 2;  
+                }  
+                ag = Math.floor(ag) + 1;  
+                return ag;  
+            }  
+   
+                    function juliandate ( d, m, y )  
+            {  
+                var d, m, y;  
+                var mm,  yy;  
+                var k1, k2, k3;  
+                var j;  
+                yy = y - Math.floor((12 - m) / 10);  
+                mm = m + 9;  
+                if (mm >= 12)  
+                {  
+                    mm = mm - 12;  
+                }  
+                k1 = Math.floor(365.25 * (yy + 4712));  
+                k2 = Math.floor(30.6001 * mm + 0.5);  
+                k3 = Math.floor(Math.floor((yy / 100) + 49) * 0.75) - 38;  
+                j = k1 + k2 + d + 59;  
+                if (j > 2299160)  
+                {  
+                    j = j - k3;  
+                }  
+                return j ;  
+            }  
+          
+            function getAge(form)  
+            {  
+                var imgName;  
+                var d=parseInt(MyForm.DayCombo.value);  
+                var m=parseInt(MyForm.MonthCombo.value);  
+                var y=parseInt(MyForm.YearCombo.value);  
+                var ag=moonage(d, m, y);  
+                if(ag==1)  
+                {  
+                    form.age.value=ag.toString()+" day";  
+                }  
+                else  
+                {  
+                    form.age.value=ag.toString()+" days";  
+                }  
+                var imgName="images/phase"+ag.toString()+".bmp";  
+                ShowMoonPhase(imgName);  
+            
+              
+            }  
+            function age(){
+            if (ag <= 6){
+document.write("Waxing Crescent")    ;
+                }
+            }
+          
+        </script>  
+    </head>  
+    <body onload="Start();">  
+        <form name="MyForm" method="post">  
+            <h2><p> Moon phase </h2></p>  
+            
+            Select year:  
+            <select id="cmbYears" name="YearCombo" onchange="FebruaryDays(this);">  
+            </select>  
+            Select month:  
+            <select id="cmbMonths" name="MonthCombo" onchange="GetDays(this);">  
+            </select>  
+            Select day:  
+            <select id="cmbDays" name="DayCombo";>  
+            </select>  
+            <p > Click button to get moon phase:  
+            <input name="moon" value="Moon phase" type=button onClick="getAge(form)";>  
+            <p> <b>Moon age:</b>  
+            <input name="age" readonly size=10>  
+            <p > <b>Moon phase:</b> </p> 
+           <img id="PhaseImage" name="MoonImage" onload="getAge()">  
+           <p onload="age()"></p>
+        </form>  
+    </body>  
+</html> 
